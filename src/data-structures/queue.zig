@@ -1,6 +1,11 @@
 const std = @import("std");
 const testing = std.testing;
 
+/// FIFO (First In First Out)
+///
+/// Adds items at the end of the queue
+///
+/// Removes items at the start of the queue
 pub fn Queue(comptime T: type) type {
     return struct {
         const This = @This();
@@ -12,6 +17,7 @@ pub fn Queue(comptime T: type) type {
         start: ?*Node,
         end: ?*Node,
 
+        /// Returns an empty queue
         pub fn init(allocator: std.mem.Allocator) This {
             return This{
                 .allocator = allocator,
@@ -19,6 +25,8 @@ pub fn Queue(comptime T: type) type {
                 .end = null,
             };
         }
+
+        /// Adds an item to the end of the queue
         pub fn enqueue(this: *This, value: T) !void {
             const node = try this.allocator.create(Node);
             node.* = .{ .value = value, .next = null };
@@ -29,6 +37,8 @@ pub fn Queue(comptime T: type) type {
             }
             this.end = node;
         }
+
+        /// Removes the item at the start of the queue and returns the result
         pub fn dequeue(this: *This) ?T {
             const start = this.start orelse return null;
             defer this.allocator.destroy(start);
